@@ -25,10 +25,7 @@
   "model_dir": "GPT-Reddit-output",
 
   "train_set": "GPT-Reddit.train.index",
-  "val_set": {
-    "pile": "GPT-Reddit.val.index",
-    "owt": "GPT-Reddit.val.index"
-  },
+  "val_set": {},
 
   "eval_harness_tasks": [
     "lambada",
