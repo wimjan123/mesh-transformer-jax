@@ -1,0 +1,50 @@
+{
+  "layers": 28,
+  "d_model": 4096,
+  "n_heads": 16,
+  "n_vocab": 50400,
+  "norm": "layernorm",
+  "pe": "rotary",
+  "pe_rotary_dims": 64,
+
+  "seq": 2048,
+  "cores_per_replica": 8,
+  "per_replica_batch": 1,
+  "gradient_accumulation_steps": 32,
+
+  "warmup_steps": 80,
+  "anneal_steps": 768,
+  "lr": 5e-5,
+  "end_lr": 1e-5,
+  "weight_decay": 0.1,
+  "total_steps": 848,
+
+  "tpu_size": 8,
+
+  "bucket": "tpu-gpt-j",
+  "model_dir": "GPT-Reddit-output",
+
+  "train_set": "GPT-Reddit.train.index",
+  "val_set": {
+    "pile": "GPT-Reddit.val.index",
+    "owt": "GPT-Reddit.val.index"
+  },
+
+  "eval_harness_tasks": [
+    "lambada",
+    "piqa",
+    "hellaswag",
+    "winogrande",
+    "mathqa",
+    "pubmedqa"
+  ],
+
+  "val_batches": 100,
+  "val_every": 500,
+  "ckpt_every": 500,
+  "keep_every": 10000,
+
+  "name": "GPT-Reddit",
+  "wandb_project": "mesh-transformer-jax",
+  "comment": ""
+}
