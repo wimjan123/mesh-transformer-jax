@@ -12,17 +12,17 @@
   "per_replica_batch": 1,
   "gradient_accumulation_steps": 32,
 
-  "warmup_steps": 80,
-  "anneal_steps": 768,
+  "warmup_steps": 300,
+  "anneal_steps": 3915,
   "lr": 5e-5,
   "end_lr": 1e-5,
   "weight_decay": 0.1,
-  "total_steps": 848,
+  "total_steps": 4215,
 
   "tpu_size": 8,
 
   "bucket": "tpu-gpt-reddit",
-  "model_dir": "GPT-Reddit-output",
+  "model_dir": "GPT-Reddit-output-V2",
 
   "train_set": "GPT-Reddit.train.index",
   "val_set": {},

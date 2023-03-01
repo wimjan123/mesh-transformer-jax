@@ -1,1 +1,6 @@
-gs://tpu-gpt-reddit/datasets/_27133.tfrecords
+gs://tpu-gpt-reddit/datasets/comments_extracted_2009-07_4921.tfrecords
+gs://tpu-gpt-reddit/datasets/comments_extracted_2017-07_sifted_clean00_29324.tfrecords
+gs://tpu-gpt-reddit/datasets/comments_extracted_2017-07_sifted_clean01_29177.tfrecords
+gs://tpu-gpt-reddit/datasets/comments_extracted_2017-07_sifted_clean02_29205.tfrecords
+gs://tpu-gpt-reddit/datasets/comments_extracted_2017-07_sifted_clean03_29194.tfrecords
+gs://tpu-gpt-reddit/datasets/comments_extracted_2017-07_sifted_clean04_13059.tfrecords
