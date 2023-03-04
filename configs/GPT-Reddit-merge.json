@@ -21,7 +21,7 @@
 
   "tpu_size": 8,
 
-  "bucket": "tpu-gpt-reddit",
+  "bucket": "gpt-j-train",
   "model_dir": "GPT-Reddit-output-V2-merged",
 
   "train_set": "GPT-Reddit.train.index",
