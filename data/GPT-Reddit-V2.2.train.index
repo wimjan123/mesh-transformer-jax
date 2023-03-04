@@ -1,0 +1,4 @@
+gs://tpu-gpt-reddit/datasets/comments_2018-v1_436071.tfrecords
+gs://tpu-gpt-reddit/datasets/comments_2018-v2_432920.tfrecords
+gs://tpu-gpt-reddit/datasets/comments_2018-v3_408331.tfrecords
+gs://tpu-gpt-reddit/datasets/comments_2018-v4_403739.tfrecords
