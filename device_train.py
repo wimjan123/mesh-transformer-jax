@@ -254,9 +254,7 @@ if __name__ == "__main__":
     tokens_per_step = params['seq'] * sequences_per_step
 
     # load + run
-    mesh_config = jax.experimental.maps.MeshConfig(devices, ('dp', 'mp'))
-    with jax.experimental.maps.mesh_impl(mesh_config):
-
+    with jax.experimental.maps.mesh(devices, ('dp', 'mp')):
         print("initializing network")
         network = CausalTransformer(params)
 
