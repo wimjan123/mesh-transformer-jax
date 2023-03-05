@@ -38,7 +38,7 @@
 
   "val_batches": 0,
   "val_every": 70000,
-  "ckpt_every": 500,
+  "ckpt_every": 1000,
   "keep_every": 10000,
 
   "name": "GPT-Reddit",
