@@ -21,3 +21,5 @@ fastapi
 uvicorn
 lm_dataformat
 pathy
+smart-open[gcs]
+protobuf==3.20
