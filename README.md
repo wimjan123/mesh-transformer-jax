@@ -16,15 +16,17 @@
 # Mesh Transformer JAX
 
 TPU V4-8: 
-pip install "jax[tpu]==0.3.2" -f https://storage.googleapis.com/jax-releases/libtpu_releases.html
+pip install "jax[tpu]==0.3.3" -f https://storage.googleapis.com/jax-releases/libtpu_releases.html
 set cores_per_replica in config to 4.
+python3 -c "import jax; print(jax.devices())"
 
 Setup JAX on your TPU:
 
 sudo pip uninstall jax jaxlib -y
 pip3 install -U pip
 pip3 install jax jaxlib
-gsutil cp gs://cloud-tpu-tpuvm-v4-artifacts/wheels/libtpu/latest/libtpu_tpuv4-0.1.dev* .
+wget https://storage.googleapis.com/cloud-tpu-tpuvm-artifacts/libtpu_v4/wheel/20220127/libtpu_tpuv4-0.1.dev20220127-py3-none-any.whl
+
 pip3 install libtpu_tpuv4-0.1.dev*
 
 Check:
