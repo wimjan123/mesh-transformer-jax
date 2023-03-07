@@ -8,7 +8,7 @@ optax==0.0.9
 dm-haiku==0.0.5
 git+https://github.com/EleutherAI/lm-evaluation-harness/
 ray[default]==1.4.1
-"jax[tpu]==0.3.2" -f https://storage.googleapis.com/jax-releases/libtpu_releases.html
+jax[tpu]==0.3.2 -f https://storage.googleapis.com/jax-releases/libtpu_releases.html
 Flask~=1.1.2
 cloudpickle~=1.3.0
 tensorflow-cpu~=2.6.0
