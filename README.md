@@ -15,6 +15,11 @@
 
 # Mesh Transformer JAX
 
+TPU V4-8: 
+pip install "jax[tpu]==0.3.2" -f https://storage.googleapis.com/jax-releases/libtpu_releases.html
+set cores_per_replica in config to 4.
+
+
 A haiku library using the `xmap`/`pjit` operators in JAX for model parallelism of transformers.
 
 The parallelism scheme is similar to the [original Megatron-LM](https://arxiv.org/abs/1909.08053), which is efficient
