@@ -19,6 +19,18 @@ TPU V4-8:
 pip install "jax[tpu]==0.3.2" -f https://storage.googleapis.com/jax-releases/libtpu_releases.html
 set cores_per_replica in config to 4.
 
+Setup JAX on your TPU:
+
+sudo pip uninstall jax jaxlib -y
+pip3 install -U pip
+pip3 install jax jaxlib
+gsutil cp gs://cloud-tpu-tpuvm-v4-artifacts/wheels/libtpu/latest/libtpu_tpuv4-0.1.dev* .
+pip3 install libtpu_tpuv4-0.1.dev*
+
+Check:
+python3
+import jax
+jax.device_count()
 
 A haiku library using the `xmap`/`pjit` operators in JAX for model parallelism of transformers.
 
