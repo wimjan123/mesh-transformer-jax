@@ -5,12 +5,8 @@ from jax.experimental import maps
 import numpy as np
 import optax
 import transformers
-import io
-import os
 
-from google.cloud import storage
-
-from mesh_transformer.checkpoint import read_ckpt
+from mesh_transformer.checkpoint import read_ckpt, write_ckpt
 from mesh_transformer.sampling import nucleaus_sample
 from mesh_transformer.transformer_shard import CausalTransformer
 
@@ -24,7 +20,7 @@ params = {
   "pe_rotary_dims": 64,
   "early_cast": True,
   "seq": 2048,
-  "cores_per_replica": 1,  # only running on one GPU
+  "cores_per_replica": 4,  # resharding into 4 shards
   "per_replica_batch": 1,
 }
 
@@ -32,14 +28,14 @@ per_replica_batch = params["per_replica_batch"]
 cores_per_replica = params["cores_per_replica"]
 seq = params["seq"]
 
+
 params["sampler"] = nucleaus_sample
 
-# here we "remove" the optimizer parameters from the model
+# here we "remove" the optimizer parameters from the model (as we don't need them for inference)
 params["optimizer"] = optax.scale(0)
 
 devices = np.array([jax.devices()[0]]).reshape((1, 1))
-mesh_shape = (4, 1)
-maps.thread_resources.env = maps.ResourceEnv(maps.mesh(devices, [mesh_shape], ('dp', 'mp')))
+maps.thread_resources.env = maps.ResourceEnv(maps.Mesh(devices, ('dp', 'mp')))
 
 tokenizer = transformers.GPT2TokenizerFast.from_pretrained('gpt2')
 
@@ -47,27 +43,17 @@ network = CausalTransformer(params)
 
 start = time.time()
 
-# load the checkpoint from a Google Cloud bucket
-client = storage.Client()
-bucket = client.get_bucket('gpt-j-train')
-blob = bucket.blob('step_383500')
-data = io.BytesIO(blob.download_as_string())
+# here we load a checkpoint which was written with 8 shards into 1 shard
+network.state = read_ckpt(network.state, "gs://gpt-j-train/step_383500", 8, shards_out=cores_per_replica)
 
-# read the checkpoint with 8 shards into 1 shard
-network.state = read_ckpt(network.state, data, 8, shards_out=1)
+# resharding into 4 shards
+network.state = network.reshape_by_device(network.state, 4)
+
+# saving the checkpoint in Google Cloud Bucket
+write_ckpt(network.state, "gs://gpt-j-train/resharded/", "step_383500/")
 
 # move the state to CPU/system memory so it's not duplicated by xmap
 network.state = jax.device_put(network.state, jax.devices("cpu")[0])
-
-# shard the model into 4 shards
-network.state = np.stack(np.split(network.state, 4))
-
-# save the sharded checkpoint to a Google Cloud bucket
-output_data = io.BytesIO()
-np.savez_compressed(output_data, *network.state)
-output_data.seek(0)
-output_blob = bucket.blob('checkpoint/step_383500_shardedv4')
-output_blob.upload_from_file(output_data)
 
 def infer(context, top_k=40, top_p=0.9, temp=1.0, gen_len=512):
     tokens = tokenizer.encode(context)
@@ -90,5 +76,6 @@ def infer(context, top_k=40, top_p=0.9, temp=1.0, gen_len=512):
 
     print(f"completion done in {time.time() - start:06}s")
     return samples
+
 
 infer("EleutherAI is")
