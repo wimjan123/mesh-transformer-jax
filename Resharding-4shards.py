@@ -40,7 +40,7 @@ params["optimizer"] = optax.scale(0)
 devices = np.array([jax.devices()[0]]).reshape((1, 1))
 mesh_shape = (4, 1)
 loops = 1  # only running on one GPU
-maps.thread_resources.env = maps.ResourceEnv(maps.Mesh(devices, mesh_shape, ('dp', 'mp'), loops))
+maps.thread_resources.env = maps.ResourceEnv(maps.Mesh(devices, mesh_shape, loops=loops))
 
 tokenizer = transformers.GPT2TokenizerFast.from_pretrained('gpt2')
 
@@ -67,7 +67,7 @@ network.state = np.stack(np.split(network.state, 4))
 output_data = io.BytesIO()
 np.savez_compressed(output_data, *network.state)
 output_data.seek(0)
-output_blob = bucket.blob('checkpoint/step_383500_sharded')
+output_blob = bucket.blob('checkpoint/step_383500_shardedv4')
 output_blob.upload_from_file(output_data)
 
 def infer(context, top_k=40, top_p=0.9, temp=1.0, gen_len=512):
