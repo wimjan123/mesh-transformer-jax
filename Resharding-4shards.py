@@ -39,8 +39,7 @@ params["optimizer"] = optax.scale(0)
 
 devices = np.array([jax.devices()[0]]).reshape((1, 1))
 mesh_shape = (4, 1)
-loops = 1  # only running on one GPU
-maps.thread_resources.env = maps.ResourceEnv(maps.Mesh(devices, mesh_shape, loops=loops))
+maps.thread_resources.env = maps.ResourceEnv(maps.Mesh(devices, mesh_shape))
 
 tokenizer = transformers.GPT2TokenizerFast.from_pretrained('gpt2')
 
