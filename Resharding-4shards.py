@@ -1,3 +1,6 @@
+# This was tested with an RTX 3090, peak memory usage is approximately 22.4GB during inference, and 19GB when loading the model
+# The following environment variables were also used: XLA_PYTHON_CLIENT_PREALLOCATE=false XLA_PYTHON_CLIENT_ALLOCATOR=platform
+
 import time
 
 import jax
@@ -6,7 +9,7 @@ import numpy as np
 import optax
 import transformers
 
-from mesh_transformer.checkpoint import read_ckpt, write_ckpt
+from mesh_transformer.checkpoint import read_ckpt
 from mesh_transformer.sampling import nucleaus_sample
 from mesh_transformer.transformer_shard import CausalTransformer
 
@@ -20,7 +23,7 @@ params = {
   "pe_rotary_dims": 64,
   "early_cast": True,
   "seq": 2048,
-  "cores_per_replica": 4,  # resharding into 4 shards
+  "cores_per_replica": 4,  # only running on one GPU
   "per_replica_batch": 1,
 }
 
@@ -35,7 +38,7 @@ params["sampler"] = nucleaus_sample
 params["optimizer"] = optax.scale(0)
 
 devices = np.array([jax.devices()[0]]).reshape((1, 1))
-maps.thread_resources.env = maps.ResourceEnv(maps.Mesh(devices, ('dp', 'mp'), 1))  # added loops argument
+maps.thread_resources.env = maps.ResourceEnv(maps.Mesh(devices, ('dp', 'mp')))
 
 tokenizer = transformers.GPT2TokenizerFast.from_pretrained('gpt2')
 
@@ -44,13 +47,7 @@ network = CausalTransformer(params)
 start = time.time()
 
 # here we load a checkpoint which was written with 8 shards into 1 shard
-network.state = read_ckpt(network.state, "gs://gpt-j-train/step_383500", 8, shards_out=cores_per_replica)
-
-# resharding into 4 shards
-network.state = network.reshape_by_device(network.state, 4)
-
-# saving the checkpoint in Google Cloud Bucket
-write_ckpt(network.state, "gs://gpt-j-train/resharded/", "step_383500/")
+network.state = read_ckpt(network.state, "gs://gpt-j-train/step_383500/", 8, shards_out=cores_per_replica)
 
 # move the state to CPU/system memory so it's not duplicated by xmap
 network.state = jax.device_put(network.state, jax.devices("cpu")[0])
