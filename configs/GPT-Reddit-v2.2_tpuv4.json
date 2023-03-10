@@ -22,7 +22,7 @@
   "tpu_size": 8,
 
   "bucket": "gpt-j-train",
-  "model_dir": "GPT-Reddit-output-V2.2-v2",
+  "model_dir": "4shards",
 
   "train_set": "GPT-Reddit-V2.2.train.index",
   "val_set": {},
