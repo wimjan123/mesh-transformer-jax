@@ -38,7 +38,7 @@ params["sampler"] = nucleaus_sample
 params["optimizer"] = optax.scale(0)
 
 devices = np.array([jax.devices()[0]]).reshape((1, 1))
-maps.thread_resources.env = maps.ResourceEnv(maps.Mesh(devices, ('dp', 'mp')),loops=2)
+maps.thread_resources.env = maps.ResourceEnv(maps.Mesh(devices, ('dp', 'mp')),loops={'dp': 2, 'mp': 2})
 
 tokenizer = transformers.GPT2TokenizerFast.from_pretrained('gpt2')
 
